@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发送短信</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin-top: 50px;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background-color: #07c160; /* 微信绿色 */
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #06ad56;
+        }
+        .tip {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>一键发送短信</h2>
+        <p>点击下方按钮，系统将为您跳转到短信发送界面，内容已为您预填好。</p >
+        <!-- 核心：将按钮的链接设置为 smsto 协议 -->
+        <a class="btn" href=" ">点击发送短信</a >
+        <p class="tip">如果点击后没有反应，请尝试使用手机系统浏览器打开此页面。</p >
+    </div>
+</body>
+</html>
