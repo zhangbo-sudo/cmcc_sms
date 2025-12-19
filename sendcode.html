@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跳转中...</title>
+    <!-- 为了隐私，防止搜索引擎收录这个跳转页 -->
+    <meta name="robots" content="noindex">
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-top: 20vh;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #07c160;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .tip {
+            font-size: 14px;
+            color: #666;
+            margin-top: 25px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>正在准备短信发送...</h3>
+        <p id="status">如果跳转未自动开始，请点击下方按钮。</p >
+        <!-- 备用按钮：如果自动跳转失败，用户可以手动点击 -->
+        <a id="fallbackBtn" class="btn" href=" " style="display:none;">点击发送短信</a >
+    </div>
+
+    <script>
+        // ====== ！！！ 请修改这里的手机号和短信内容 ！！！ ======
+        var phoneNumber = '10086'; // 替换为你的目标手机号
+        var messageText = '发送集团V网代码'; // 替换为你的短信内容
+        // ==============================================
+
+        // 1. 构建短信链接
+        var smsLink = 'smsto:' + phoneNumber + ':' + encodeURIComponent(messageText);
+        
+        // 2. 立即尝试自动跳转
+        window.location.href = smsLink;
+        
+        // 3. 设置一个检测：如果一段时间后页面仍然存在（说明跳转失败），则显示备用按钮
+        setTimeout(function() {
+            document.getElementById('status').innerHTML = '自动跳转失败，请手动点击按钮发送。';
+            var fallbackBtn = document.getElementById('fallbackBtn');
+            fallbackBtn.href = smsLink; // 为按钮设置同样的链接
+            fallbackBtn.style.display = 'inline-block'; // 显示按钮
+        }, 800); // 等待800毫秒后执行检测
+    </script>
+</body>
+</html>
