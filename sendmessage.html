@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短信发送助手</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: #333;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h2 { color: #2d3748; margin-bottom: 10px; }
+        .info-box {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+            border-left: 5px solid #4299e1;
+        }
+        .info-box p { margin: 8px 0; }
+        .weixin-tip {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none; /* 默认隐藏，由JS控制显示 */
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            margin: 15px 0;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(76, 175, 80, 0.6); }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1.5s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div id="loadingSection">
+            <h2>正在启动短信发送</h2>
+            <div class="spinner"></div>
+            <p>正在为您跳转至短信应用...</p >
+        </div>
+
+        <div id="contentSection" style="display: none;">
+            <h2>短信发送助手</h2>
+            
+            <div class="info-box">
+                <p><strong>收件人：</strong><span id="displayPhone">正在加载...</span></p >
+                <p><strong>短信内容：</strong><span id="displayMessage">正在加载...</span></p >
+            </div>
+
+            <div id="weixinTip" class="weixin-tip">
+                <h4>微信使用提示</h4>
+                <p>检测到您在微信内打开，微信限制了直接跳转到短信功能。</p >
+                <p><strong>解决方法：</strong>请点击右上角 <strong>“…”</strong> 或 <strong>“⋮”</strong> 菜单，然后选择<strong>“在浏览器打开”</strong>，即可正常发送。</p >
+            </div>
+
+            <p id="jumpTip">如果跳转没有自动开始，请点击下方按钮：</p >
+            <a id="smsBtn" class="btn" href=" ">点击发送短信</a >
+
+            <div class="footer">
+                <p>本页面仅提供快捷跳转功能，不会自动发送短信。</p >
+                <p>点击按钮后，您可以在系统短信应用中确认并发送。</p >
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================== 配置区域 ======================
+        // 请修改下面的手机号和短信内容为您需要的实际内容
+        const TARGET_PHONE = '10086'; // 替换为收件人手机号
+        const SMS_MESSAGE = '集团V网指令+集团ID'; // 替换为您的短信内容
+        // ====================== 配置结束 ======================
+
+        // 工具函数：检测是否在微信内置浏览器中
+        function isWeixinBrowser() {
+            const ua = navigator.userAgent.toLowerCase();
+            return ua.indexOf('micromessenger') !== -1;
+        }
+
+        // 主函数：初始化页面逻辑
+        function initPage() {
+            // 1. 显示配置的号码和内容
+            document.getElementById('displayPhone').textContent = TARGET_PHONE;
+            document.getElementById('displayMessage').textContent = SMS_MESSAGE;
+
+            // 2. 构建短信链接 (对内容进行URL编码，确保特殊字符正确传输)
+            const smsLink = `smsto:${TARGET_PHONE}:${encodeURIComponent(SMS_MESSAGE)}`;
+            document.getElementById('smsBtn').href = smsLink;
+
+            // 3. 检查微信环境
+            const isWeixin = isWeixinBrowser();
+            const weixinTipElement = document.getElementById('weixinTip');
+            const loadingSection = document.getElementById('loadingSection');
+            const contentSection = document.getElementById('contentSection');
+
+            if (isWeixin) {
+                // 在微信中：不自动跳转，显示提示
+                weixinTipElement.style.display = 'block';
+                loadingSection.style.display = 'none';
+                contentSection.style.display = 'block';
+                document.getElementById('jumpTip').textContent = '由于微信限制，请按上方提示操作后点击按钮：';
+            } else {
+                // 不在微信中：尝试自动跳转
+                setTimeout(() => {
+                    window.location.href = smsLink;
+                }, 800); // 800ms后跳转，让用户看到加载过程
+
+                // 5秒后如果还在本页面，显示备用按钮（跳转失败的情况）
+                setTimeout(() => {
+                    loadingSection.style.display = 'none';
+                    contentSection.style.display = 'block';
+                    weixinTipElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
